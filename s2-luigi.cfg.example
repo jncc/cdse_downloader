@@ -1,0 +1,23 @@
+[Core]
+
+[DownloadProductsByArea]
+mission = sentinel2
+wkt = POLYGON((-1.213619303149454 50.84007494841458,0.0892367134668721 50.84007494841458,0.0892367134668721 51.82135325292194,-1.213619303149454 51.82135325292194,-1.213619303149454 50.84007494841458))
+stateLocation = /state
+s3ConfigLocation = s3cfg
+downloadLocation = /downloads
+productType = S2MSI1C
+s2CloudCover = 95
+
+[DownloadProductsFromList]
+mission = sentinel2
+stateLocation = /state
+s3configLocation = s3cfg
+downloadLocation = /downloads
+
+[DownloadFromListWithReport]
+mission = sentinel2
+stateLocation = /state
+s3configLocation = s3cfg
+downloadLocation = /downloads
+            

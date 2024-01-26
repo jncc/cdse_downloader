@@ -1,0 +1,22 @@
+# vscode
+################################
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+
+#python virtual environments
+################################
+*.venv
+__pycache__
+
+# Environment variables
+*.env
+
+# any images files
+*.tif
+*.tif.aux.xml
+
+# Luigi config file
+*luigi.cfg

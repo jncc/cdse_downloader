@@ -1,0 +1,11 @@
+name: downloader.venv
+channels:
+- conda-forge
+- defaults
+dependencies:
+- s3cmd
+- luigi
+- requests
+- pip
+- pip:
+  - pyfunctional
