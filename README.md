@@ -16,8 +16,6 @@ pip install -r requirements.txt
 
 ```
 pip install git+https://github.com/jncc/cdse-downloader.git
-
-pip install git+git@github.com:jncc/cdse-downloader.git
 ```
 
 # Setup and runnning 
