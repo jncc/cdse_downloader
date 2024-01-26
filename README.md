@@ -12,6 +12,14 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 ```
+# Using this worklow as a python package
+
+```
+pip install git+https://github.com/jncc/cdse-downloader.git
+
+pip install git+git@github.com:jncc/cdse-downloader.git
+```
+
 # Setup and runnning 
 
 ## Download products by area

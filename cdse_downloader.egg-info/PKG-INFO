@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: cdse-downloader
+Version: 0.0.1
+Summary: A luigi workflow to get products from the Copernicus Data Space Ecosystem
+Home-page: https://github.com/jncc/cdse-downloader
+Author: JNCC
+Author-email: developers@jncc.gov.uk
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+
+
+        A Luigi workflow to get Sentnel 1 and 2 products from CDSE
+        
+        The workflow uses the Copernicus Data Space Ecosystem (CDSE) API to get a subset of the Sentinal 1 and 2 raw products.
+        
+        [The CDSE data portal](https://dataspace.copernicus.eu/)
+
+        [Luigi workflow](https://luigi.readthedocs.io/en/stable/index.html)
+    
