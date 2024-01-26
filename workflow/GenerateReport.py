@@ -5,10 +5,10 @@ import logging
 
 from luigi.util import requires
 from datetime import datetime
-from cdse_downloader.SearchForProducts import SearchForProducts
-from cdse_downloader.SearchForProductsFromList import SearchForProductsFromList
-from cdse_downloader.DownloadProducts import DownloadProductsByArea, DownloadProductsFromList
-from cdse_downloader.report_generator import ReportGenerator
+from .SearchForProducts import SearchForProducts
+from .SearchForProductsFromList import SearchForProductsFromList
+from .DownloadProducts import DownloadProductsByArea, DownloadProductsFromList
+from .report_generator import ReportGenerator
 
 log = logging.getLogger('luigi-interface')
 

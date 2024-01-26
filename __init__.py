@@ -1,8 +1,5 @@
-import cdse_downloader.DownloadProducts
-import cdse_downloader.SearchForProducts
-import cdse_downloader.GenerateReport
-import cdse_downloader.S3Downloader
-import cdse_downloader.report_generator
-import cdse_downloader.query_cdse
-import cdse_downloader.SearchForProductsFromList
+from .workflow.DownloadProducts import DownloadProducts
+from .workflow.GenerateReport import GenerateReport
+from .workflow.SearchForProducts import SearchForProducts
+from .workflow.SearchForProductsFromList import SearchForProductsFromList
 

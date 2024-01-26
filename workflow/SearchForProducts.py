@@ -4,7 +4,7 @@ import os
 import logging
 
 from datetime import datetime
-from cdse_downloader.query_cdse import QueryCDSE
+from .query_cdse import QueryCDSE
 from luigi.parameter import MissingParameterException
 
 log = logging.getLogger("luigi-interface")

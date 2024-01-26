@@ -7,9 +7,9 @@ from luigi.util import requires
 from functional import seq
 from datetime import datetime
 from glob import glob
-from cdse_downloader.S3Downloader import S3Downloader
-from cdse_downloader.SearchForProducts import SearchForProducts
-from cdse_downloader.SearchForProductsFromList import SearchForProductsFromList
+from .S3Downloader import S3Downloader
+from .SearchForProducts import SearchForProducts
+from .SearchForProductsFromList import SearchForProductsFromList
 
 log = logging.getLogger('luigi-interface')
 
@@ -29,7 +29,7 @@ class DownloadProducts(luigi.Task):
 
     def run(self):
         if not os.path.isfile(self.s3ConfigLocation):
-            raise Exception("S3 confing file does not exist: %s" % self.s3ConfigLocation)
+            raise Exception(f"S3 confing file does not exist: {self.s3ConfigLocation}")
 
         products = []
         with self.input().open('r') as productList:
@@ -54,7 +54,7 @@ class DownloadProducts(luigi.Task):
 
             else: 
                 offlineCount = offlineCount + 1
-                log.error("Product ID %s is offline", product["productID"])
+                log.error(f"Product ID {product['productID']} is offline")
         
         yield downloadTasks
 
@@ -76,7 +76,7 @@ class DownloadProducts(luigi.Task):
                 .map(lambda x: log.error(x))
 
             if offlineCount > 0:
-                log.error("This includes %d that were offline", offlineCount)
+                log.error(f"This includes {offlineCount} that were offline")
 
             raise Exception("Some products were not downloaded")
 

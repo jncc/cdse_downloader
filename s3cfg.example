@@ -1,6 +1,6 @@
 [default]
-secret_key = awssecretaccesskey
-access_key = awsaccesskeyid
+secret_key = secret key
+access_key = access key id
 access_token =
 add_encoding_exts =
 add_headers =
@@ -30,8 +30,8 @@ gpg_decrypt = %(gpg_command)s -d --verbose --no-use-agent --batch --yes --passph
 gpg_encrypt = %(gpg_command)s -c --verbose --no-use-agent --batch --yes --passphrase-fd %(passphrase_fd)s -o %(output_file)s %(input_file)s
 gpg_passphrase =
 guess_mime_type = True
-host_base = obs.eu-de.otc.t-systems.com
-host_bucket =
+host_base = eodata.dataspace.copernicus.eu
+host_bucket = eodata.dataspace.copernicus.eu
 human_readable_sizes = False
 invalidate_default_index_on_cf = False
 invalidate_default_index_root_on_cf = True
@@ -71,4 +71,3 @@ verbosity = WARNING
 # website_endpoint = 
 # website_error =
 # website_index = 
-
