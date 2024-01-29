@@ -4,7 +4,7 @@ Create virtual env
 
 
 ```
-cd cdse-downloader
+cd cdse_downloader
 
 virtualenv -p python3 .venv
 
@@ -16,6 +16,17 @@ pip install -r requirements.txt
 
 ```
 pip install git+https://github.com/jncc/cdse_downloader.git
+```
+
+Then import the required tasks into your workflow and use them:
+
+```
+...
+from cdse_downloader import DownloadProductsFromList
+
+@requires(DownloadProductsFromList)
+class GetArdProducts(luigi.Task):
+    ...
 ```
 
 # Setup and runnning 
