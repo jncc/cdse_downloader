@@ -12,7 +12,7 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 ```
-# Using this worklow as a python package
+# Integrating this worklow into another using a python package
 
 ```
 pip install git+https://github.com/jncc/cdse_downloader.git
