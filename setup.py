@@ -16,7 +16,7 @@ setuptools.setup(
         [Luigi workflow](https://luigi.readthedocs.io/en/stable/index.html)
     """,
     long_description_content_type="text/markdown",
-    url="https://github.com/jncc/cdse-downloader",
+    url="https://github.com/jncc/cdse_downloader",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
