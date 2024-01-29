@@ -25,7 +25,7 @@ Then import the required tasks into your workflow and use them:
 from cdse_downloader import DownloadProductsFromList
 
 @requires(DownloadProductsFromList)
-class GetArdProducts(luigi.Task):
+class GetProducts(luigi.Task):
     ...
 ```
 
