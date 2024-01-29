@@ -20,3 +20,6 @@ __pycache__
 
 # Luigi config file
 *luigi.cfg
+
+# Don't commit egg-info
+*.egg-info

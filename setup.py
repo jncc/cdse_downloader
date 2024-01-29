@@ -1,7 +1,7 @@
 import setuptools
  
 setuptools.setup(
-    name="cdse-downloader",
+    name="cdse_downloader",
     version="0.0.1",
     author="JNCC",
     author_email="developers@jncc.gov.uk",
@@ -21,6 +21,12 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
+    ],
+    install_requires=[
+        's3cmd',
+        'luigi',
+        'requests',
+        'pyfunctional'
     ],
     python_requires='>=3.7',
 )
