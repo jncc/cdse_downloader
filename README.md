@@ -15,7 +15,7 @@ pip install -r requirements.txt
 # Using this worklow as a python package
 
 ```
-pip install git+https://github.com/jncc/cdse-downloader.git
+pip install git+https://github.com/jncc/cdse_downloader.git
 ```
 
 # Setup and runnning 
