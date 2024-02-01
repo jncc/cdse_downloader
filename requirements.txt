@@ -1,5 +1,4 @@
 s3cmd
 luigi
 requests
-pip
 pyfunctional
