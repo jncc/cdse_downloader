@@ -8,7 +8,6 @@ s3ConfigLocation = s3cfg
 downloadLocation = /downloads
 productType = GRD
 s1ProcessingLevel=LEVEL1
-;s1TimelinessCategory = NRT3h
 s1SensorMode=IW
 s1Polarisation=VV&VH
 

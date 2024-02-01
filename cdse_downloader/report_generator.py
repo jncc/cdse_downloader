@@ -180,18 +180,3 @@ class ReportGenerator:
             raise Exception("Unhandled platform") 
 
 
-
-if __name__ == "__main__":
-    rg = ReportGenerator()
-
-    srcRootPath = "/home/felix/development/testing/mundi-downloader/state/"
-    targetRootPath = "/home/felix/development/testing/mundi-downloader/csv"
-    sources = ["s2-england","s2-ni", "s2-scott", "s1-england","s1-ni", "s1-scott"]
-
-    file = "/home/felix/development/testing/mundi-downloader/state/s2-scott/AcquireProductsList.json"
-    platform = "s2"
-    outputFile = "/home/felix/development/testing/mundi-downloader/csv/s2-scott-2019_02_01-2020-01-31.csv"
-
-    with open(file, "r") as f:
-        data = json.load(f)
-        rg.makeReport(platform, data, outputFile)

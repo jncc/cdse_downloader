@@ -1,3 +1,15 @@
+A Luigi workflow to get Sentnel 1 and 2 products from CDSE
+
+The workflow uses the Copernicus Data Space Ecosystem (CDSE) API to get a subset of the Sentinal 1 and 2 raw products.
+
+[The CDSE data portal](https://dataspace.copernicus.eu/)
+
+[Luigi workflow](https://luigi.readthedocs.io/en/stable/index.html)
+
+Credits
+    -S3 Downloader Code provided by [CGI](https://www.cgi.com/uk/en-gb)
+    -query_cdse based on work by [CGI](https://www.cgi.com/uk/en-gb)
+
 # Installation and setup
 
 Create virtual env

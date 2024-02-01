@@ -337,22 +337,5 @@ if __name__ == "__main__":
 	obj.run_download_checker()
 	print("result:",obj.get_result())
 
-	# entry = {
-	# 	"productPath": "s1-l1-grd-2019-q1/2019/02/10/IW/DV/S1B_IW_GRDH_1SDV_20190210T062204_20190210T062229_014880_01BC5F_EC68",
-	# 	"productID": "S1B_IW_GRDH_1SDV_20190210T062204_20190210T062229_014880_01BC5F_EC68",
-	# 	"productCheckSum": "D0F850F14EB3550C7053E39C847CB089",
-	# }
-	# obj = S3Downloader(entry, "./downloads")
-	# obj.run_downloader(dry_run=True, force_dl=True)
-	# obj.run_download_checker()
-	#
-	# entry = {
-	# 	"productPath": "s1-l1-grd/2018/01/01/IW/DV/S1A_IW_GRDH_1SDV_20180101T042052_20180101T042117_019956_021FB8_AE3C.zip",
-	# 	"productID": "S1A_IW_GRDH_1SDV_20180101T042052_20180101T042117_019956_021FB8_AE3C",
-	# 	"productCheckSum": "D0F850F14EB3550C7053E39C847CB089",
-	# }
-	# obj = S3Downloader(entry, "./downloads")
-	# obj.run_downloader(dry_run=True, force_dl=True)
-	# obj.run_download_checker()
-	# print("result:", obj.get_result())
+
 
