@@ -1,11 +1,7 @@
 import requests
-# import pandas as pd
 from pathlib import Path
-import sys
-import argparse
 import math
 import logging
-import json
 from pprint import pformat
 from functional import seq
 

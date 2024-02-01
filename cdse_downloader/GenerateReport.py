@@ -1,6 +1,5 @@
 import luigi
 import json
-import os
 import logging
 
 from luigi.util import requires
