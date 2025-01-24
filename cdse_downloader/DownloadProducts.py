@@ -42,7 +42,7 @@ class DownloadProducts(luigi.Task):
         offlineCount = 0
         for product in products:
 
-            if product["onlineStatus"] == "ONLINE":
+            if product["onlineStatus"] == "Online":
 
                 downloadTasks.append(DownloadProduct(product=product
                     ,stateLocation=self.stateLocation

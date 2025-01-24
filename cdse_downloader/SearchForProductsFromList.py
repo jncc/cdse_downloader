@@ -5,6 +5,7 @@ import json
 import os
 from functional import seq
 from pprint import pformat
+from pystac_client import Client
 
 log = logging.getLogger("luigi-interface")
 
@@ -12,7 +13,8 @@ class SearchForProductsFromList(luigi.Task):
     stateLocation = luigi.Parameter()
     productListFile = luigi.Parameter()
     
-    searchUrl = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList"
+    stacUrl = "https://catalogue.dataspace.copernicus.eu/stac/"
+    stacCatalog = Client.open(stacUrl)
     
     def formatProductName(self, product):
         if product.rfind(".SAFE") == -1:
@@ -24,37 +26,29 @@ class SearchForProductsFromList(luigi.Task):
         
         productList = seq(open(self.productListFile)) \
                         .map(lambda line: str(line).rstrip('\n')) \
+                        .map(lambda line: f"{line}.SAFE" if not line.endswith(".SAFE") else line) \
                         .filter_not(lambda line: str.strip(line) == "") \
-                        .map(lambda product: {"Name" : self.formatProductName(product)}) \
-                        .to_list()
+                        .set()
         
-        response = requests.post(
-            url=self.searchUrl,
-            json={"FilterProducts" : productList}
-            )
+        search = self.stacCatalog.search(ids=productList)
+        results = list(search.items())
         
-        if response.status_code != 200:
-            log.error("cdse API call failed")
-            log.error(f"api responded with: {pformat(response.json())}")
-            
-            raise Exception("CDSE API call failed see log for details")
-        
-        results = response.json()
-        
-        features = seq(results["value"]) \
-                    .map(lambda r: {"productID": r["Name"].replace(".SAFE", ""),
-                                    "productPath": r["S3Path"],
-                                    "onlineStatus": 'ONLINE' if r["Online"] else 'OFFLINE',
-                                    "productCheckSum": ""}) \
+        features = seq(results) \
+                    .map(lambda r: {"productID": r.id.replace(".SAFE", ""),
+                                    "productPath": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["href"],
+                                    "onlineStatus": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["storage:tier"]}) \
                     .to_list()
+        
+        log.info(features)
+        log.info(productList)
         
         if len(productList) != len(features):
             msg = "The number of products returned does not match the number requested"
             
             missingProducts = seq(productList) \
-                                .map(lambda x: x["Name"].replace(".SAFE", "")) \
+                                .map(lambda x: x.replace(".SAFE", "")) \
                                 .difference(seq(features)
-                                            .map(lambda f: f"{f['productID']}")) \
+                                            .map(lambda f: f['productID'])) \
                                 .to_list()
                      
             log.error(msg)
