@@ -15,12 +15,6 @@ class SearchForProductsFromList(luigi.Task):
     
     stacUrl = "https://catalogue.dataspace.copernicus.eu/stac/"
     stacCatalog = Client.open(stacUrl)
-    
-    def formatProductName(self, product):
-        if product.rfind(".SAFE") == -1:
-            product = f"{product}.SAFE"
-        
-        return product
         
     def run(self):
         
@@ -38,9 +32,6 @@ class SearchForProductsFromList(luigi.Task):
                                     "productPath": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["href"],
                                     "onlineStatus": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["storage:tier"]}) \
                     .to_list()
-        
-        log.info(features)
-        log.info(productList)
         
         if len(productList) != len(features):
             msg = "The number of products returned does not match the number requested"
