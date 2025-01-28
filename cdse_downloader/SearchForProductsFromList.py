@@ -30,7 +30,8 @@ class SearchForProductsFromList(luigi.Task):
         features = seq(results) \
                     .map(lambda r: {"productID": r.id.replace(".SAFE", ""),
                                     "productPath": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["href"],
-                                    "onlineStatus": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["storage:tier"]}) \
+                                    "onlineStatus": r.assets["PRODUCT"].extra_fields.get("alternate")["s3"]["storage:tier"].upper(),
+                                    "productCheckSum": ""}) \
                     .to_list()
         
         if len(productList) != len(features):

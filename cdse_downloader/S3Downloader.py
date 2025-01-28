@@ -12,6 +12,7 @@ class S3Downloader:
 
 	_s3cmd = ""
 	_url = ""
+	_checksum = ""
 	_uri = ""
 	_target_location = ""
 	_id = ""
@@ -59,6 +60,7 @@ class S3Downloader:
 				loc = ind
 		self._uri = in_entry['productPath'][loc:]
 		self._target_location = in_target_location
+		self._checksum = in_entry['productCheckSum'].upper()
 		self._unzip = unzip
 
 		# get config for s3cmd OR is it already set in environment
@@ -74,7 +76,7 @@ class S3Downloader:
           		"error": self._output_verbose}
 
 	def get_result(self):
-		# getter to see if routine downloaded
+		# getter to see if routine downloaded and verified checksum successfully
 		return self._output
 
 	def get_download_location(self):
@@ -99,7 +101,7 @@ class S3Downloader:
 	@staticmethod
 	def get(in_s3cmd):
 		# try download
-		# completion -> True
+		# completion -> _uri checksum -> True:False
 		# fail -> False
 		# function returns only the exit code, the deliverable is the downloads from s3cmd
 		# todo: how to stop output from being sent to terminal, contain inside object
@@ -187,13 +189,124 @@ class S3Downloader:
 			fixed_appendix = fixed_appendix[1:]
 		return in_location + fixed_appendix
 
+	@staticmethod
+	def get_manifest_checksum_list(in_location):
+		# find the manifest file and create key:value mappings of file:checksum
+		# for files with no checksum in manifest: value=False
+		manifest_location = in_location + "/manifest.safe"
+		manifest_list = []
+
+		# todo add try block
+		with open(manifest_location, 'r') as myfile:
+			manifest = ET.fromstring(myfile.read().strip("\n"))
+		# find all pairs
+		for ii in manifest.find('dataObjectSection'):
+			filepath = ""
+			value = ""
+			for jj in ii.find('byteStream'):
+				# get location
+				if jj.get("href"):
+					filepath = jj.get("href")
+				# get algorithm
+				if jj.get("checksumName"):
+					checkSumName = jj.get("checksumName").upper()
+				# get checksum
+				if jj.text:
+					value = jj.text
+					value = value.upper()
+			# concat file location with full path
+			filepath = S3Downloader.concatenate_file_paths(in_location, filepath)
+			manifest_list.append({
+				"filepath": filepath,
+				"checksum": value,
+				"checksumType": checkSumName
+			})
+		return manifest_list
+
+	@staticmethod
+	def checksum(in_location, in_uri, in_checksum, in_unzip):
+		# if the download is a zip, unzip it and use the manifest file checksums
+		total_path = in_location+in_uri
+		# check if unzipped folder exists also
+		unzipped = total_path[:-4]
+		unzipped_bool = os.path.exists(unzipped)
+
+		has_unzipped = False
+		# if zip in file name AND folder same name as zip doesnt exist (from previous run)
+		if not total_path.find(".zip") == -1 and not unzipped_bool:
+			print("zip in file name AND folder same name as zip doesnt exist")
+
+			# print("@@ unzipping @@")
+			with zipfile.ZipFile(total_path,"r") as f:
+				f.extractall(in_location+"/")
+				f.close()
+			# remove .SAFE extension if exists
+			if os.path.exists(total_path[:-4]+".SAFE"):
+				folder_name = total_path[:-4]
+				os.rename(total_path[:-4]+".SAFE", total_path[:-4])
+				total_path = folder_name
+
+			# Indicate that we have just unzipped the file
+			has_unzipped = True
+			
+		result = False
+		# remove zip from total path
+		if not total_path.find(".zip") == -1:
+			total_path = total_path[:-4]
+		# determine logic path for either .zip or SAFE folder
+		if not total_path.find(".zip") == -1 and not unzipped_bool:
+			# determine logic path for either .zip or SAFE folder 1
+			# todo: remove this logic as you can't ever satisfy the condition for this if statement? The in_checksum is never used
+			# result = S3Downloader.checksum_file(total_path, in_checksum)
+
+			raise Exception("No handling for verifying checksum of zip files")
+		else:
+			# get file:hash from manifest, in_checksum is not used in this path
+			manifest = S3Downloader.get_manifest_checksum_list(total_path)
+			# iterate through all files and verify hash
+			manifest_verified = {}
+			for entry in manifest:
+				# create file:hashstatus pairs
+				manifest_verified.update({entry["filepath"]: S3Downloader.checksum_file(entry["filepath"], entry["checksum"], entry["checksumType"])})
+			# todo: log files that have no hash provided?
+			# if any hashes return false then verifying download == False
+			result = False if False in manifest_verified.values() else True
+
+		if not in_unzip and has_unzipped:
+			# Remove unzipped folder here
+			shutil.rmtree(unzipped, ignore_errors=True)
+		elif in_unzip and has_unzipped:
+			# Remove zips
+			os.remove(total_path + ".zip")
+
+		return result
+
+	@staticmethod
+	def checksum_file(in_file, in_checksum, checksumType):
+		out = ""
+
+		if checksumType == "MD5":
+			out = hashlib.md5(open(in_file, 'rb').read()).hexdigest().upper()
+		elif checksumType == "SHA3-256":
+			out = hashlib.sha3_256(open(in_file, 'rb').read()).hexdigest().upper()
+		else:
+			raise Exception(f"Unsupported checksum algorithm {checksumType}")
+
+		print(f"@@ {in_checksum} - {out} || {True if in_checksum == out else False} || {in_file}")
+		return True if in_checksum == out else False
+
 	def run_download_checker(self):
 		# did download work? https://github.com/s3tools/s3cmd/blob/master/S3/ExitCodes.py
 		# self._proc_returncode = 0
 		if self._proc_returncode == 0:
-			# download OK
-			self._output_verbose = "DOWNLOAD OK"
-			self._retry = False
+			# download OK, verify hash
+			self._output = self.checksum(self._target_location, self._uri, self._checksum, self._unzip)
+			if self._output:
+				self._output_verbose = "DOWNLOAD OK, CHECKSUM OK"
+				self._retry = False
+			else:
+				self._output_verbose = "DOWNLOAD OK, CHECKSUM FAIL"
+				self._retry = True
 		elif self._proc_returncode in self.retryable:
 			# retryable return codes
 			self._retry = True
@@ -213,7 +326,8 @@ class S3Downloader:
 if __name__ == "__main__":
 
 	entry = {
-            "onlineStatus": "Online",
+            "onlineStatus": "ONLINE",
+            "productCheckSum": "",
             "productID": "S2A_MSIL1C_20230501T110621_N0509_R137_T30UYB_20230501T131147",
             "productPath": "/eodata/Sentinel-2/MSI/L1C/2023/05/01/S2A_MSIL1C_20230501T110621_N0509_R137_T30UYB_20230501T131147.SAFE"
         }
@@ -222,6 +336,5 @@ if __name__ == "__main__":
 	obj.run_downloader(dry_run=False, force_dl=False)
 	obj.run_download_checker()
 	print("result:",obj.get_result())
-
 
 
