@@ -11,7 +11,7 @@ class ReportGenerator:
         self.dbConnectionTimeout = dbConnectionTimeout
 
     def getS2productData(self, product):
-        pattern = re.compile("S2([AB])_MSIL1C_((20[0-9]{2})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}))_\w+_(R[0-9]{3})_(T\w+)_")
+        pattern = re.compile("S2([ABC])_MSIL1C_((20[0-9]{2})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}))_\w+_(R[0-9]{3})_(T\w+)_")
 
         productId = product["productID"]
         
@@ -91,7 +91,7 @@ class ReportGenerator:
 
 
     def getS1productData(self, product):
-        pattern = re.compile("S1([AB])_IW_\w+_1SDV_((20[0-9]{2})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}))")
+        pattern = re.compile("S1([ABC])_IW_\w+_1SDV_((20[0-9]{2})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}))")
 
         productId = product["productID"]
         
@@ -150,7 +150,7 @@ class ReportGenerator:
         conn.close()
 
     def makeS1Report(self, data, outputPath, dbPath):
-        pattern = re.compile("S1([AB])_IW_GRDH_1SDV_((20[0-9]{2})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}))")
+        pattern = re.compile("S1([ABC])_IW_GRDH_1SDV_((20[0-9]{2})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}))")
         
         rows = []
         for p in data["productList"]:
