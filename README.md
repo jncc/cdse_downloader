@@ -77,6 +77,8 @@ LUIGI_CONFIG_PATH=s2-england-luigi.cfg PYTHONPATH='.' luigi --module cdse_downlo
 ### Luigi Arguments
     --mission
         sentinel1 or sentinel2
+    --platform
+        Specific satellite, e.g. S1A, S2A.
     --startDate         
         Start date of date range as ISO datetime format YYYY-MM-DDThhmmss
     --endDate           
