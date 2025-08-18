@@ -17,9 +17,13 @@ class SearchForProducts(luigi.Task):
     startDate = luigi.DateMinuteParameter(default=datetime.now())
     endDate = luigi.DateMinuteParameter(default=datetime.now())
     wkt = luigi.Parameter()
+    platform = luigi.Parameter(default="")
     s2CloudCover = luigi.IntParameter(default=0)
     onlineOnly = luigi.BoolParameter(default=True)
     s1RelativeOrbitNo = luigi.IntParameter(default=-1)
+    orbitDirection = luigi.ChoiceParameter(default="", 
+                                           choices=["", "ASCENDING", "DESCENDING"],
+                                           var_type=str)
     productType = luigi.Parameter(default="")
 
     s1Polarisation = luigi.ChoiceParameter(default="", 
@@ -75,21 +79,23 @@ class SearchForProducts(luigi.Task):
             raise MissingParameterException("wkt must be specified")
         else:
             self.params.update({"geometry" : self.wkt})
+
+        if self.platform != "":
+            self.params.update({"platform" : self.platform})
+
+        if self.productType != "":
+            self.params.update({"productType" : self.productType})
         
         if self.onlineOnly:
-            self.params.update({
-                "status": "ONLINE"
-            })
+            self.params.update({"status": "ONLINE"})
+
+        if self.orbitDirection != "":
+            self.params.update({"orbitDirection" : self.orbitDirection})
             
         # add date filter
         self.params.update({"startDate": self.startDate.strftime("%Y-%m-%dT%H:%M:%SZ"), 
                        "completionDate": self.endDate.strftime("%Y-%m-%dT%H:%M:%SZ")})
             
-        # filter by product type
-        if self.productType != "":
-            self.params.update({"productType" : self.productType})
-        
-
         cdse_obj = QueryCDSE(sat)
     
         features = cdse_obj.run_query(self.params, None)
