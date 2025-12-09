@@ -51,6 +51,6 @@ class DownloadProduct(luigi.Task):
             outFile.write(json.dumps(result, indent=4, sort_keys=True))
 
     def output(self):
-        productID = os.path.dirname(self.remoteProductPath).replace(".SAFE", "")
+        productID = os.path.basename(self.remoteProductPath).replace(".SAFE", "")
         stateFilename = f"DownloadProduct_{productID}.json"
         return luigi.LocalTarget(os.path.join(self.stateLocation, stateFilename))

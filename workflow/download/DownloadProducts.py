@@ -4,6 +4,10 @@ import os
 import logging
 
 from workflow.download.DownloadProduct import DownloadProduct
+from workflow.download.SearchForProducts import SearchForProducts
+from workflow.download.SearchForProductsFromList import SearchForProductsFromList
+from luigi import LocalTarget
+from luigi.util import requires
 
 log = logging.getLogger('luigi-interface')
 
@@ -11,6 +15,8 @@ class DownloadProducts(luigi.Task):
     stateLocation = luigi.Parameter()
     downloadLocation = luigi.Parameter()
     dryRun = luigi.BoolParameter(default=False)
+
+    _stateFileName = ""
 
     def run(self):
         products = []
@@ -39,5 +45,18 @@ class DownloadProducts(luigi.Task):
             outFile.write(json.dumps(result, indent=4, sort_keys=True))
 
     def output(self):
-        stateFilename = f"DownloadProducts.json"
-        return luigi.LocalTarget(os.path.join(self.stateLocation, stateFilename))
+        return LocalTarget(os.path.join(self.stateLocation, self._stateFileName))
+    
+@requires(SearchForProducts)
+class DownloadProductsByArea(DownloadProducts):
+    _stateFileName = "DownloadProductsByArea.json"
+    
+    def nullFunction(self):
+        pass
+
+@requires(SearchForProductsFromList)
+class DownloadProductsFromList(DownloadProducts):
+    _stateFileName = "DownloadProductsFromList.json"
+    
+    def nullFunction(self):
+        pass
