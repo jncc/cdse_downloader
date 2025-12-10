@@ -6,8 +6,6 @@ import boto3
 
 from dotenv import load_dotenv
 
-load_dotenv()
-
 log = logging.getLogger('luigi-interface')
 
 class DownloadProduct(luigi.Task):
@@ -15,6 +13,7 @@ class DownloadProduct(luigi.Task):
     stateLocation = luigi.Parameter()
     downloadLocation = luigi.Parameter()
     dryRun = luigi.BoolParameter(default=False)
+    envFilePath = luigi.Parameter(default=None)
 
     def getLocalPath(self, objectKey):
         remoteDirectory = os.path.dirname(self.remoteProductPath)
@@ -23,6 +22,11 @@ class DownloadProduct(luigi.Task):
         return os.path.join(self.downloadLocation, relativePath)
 
     def run(self):
+        if self.envFilePath:
+            load_dotenv(self.envFilePath)
+        else:
+            load_dotenv()
+
         productID = os.path.basename(self.remoteProductPath)
 
         s3 = boto3.resource("s3")

@@ -7,19 +7,22 @@ from pystac_client import Client
 from functional import seq
 from pprint import pformat
 from luigi import LocalTarget
-from luigi.util import requires
-
 from dotenv import load_dotenv
 
-load_dotenv()
 
 log = logging.getLogger('luigi-interface')
 
 class SearchForProductsFromList(luigi.Task):
     stateLocation = luigi.Parameter()
     productListFile = luigi.Parameter()
+    envFilePath = luigi.Parameter(default=None)
 
     def run(self):
+        if self.envFilePath:
+            load_dotenv(self.envFilePath)
+        else:
+            load_dotenv()
+
         productList = seq(open(self.productListFile)) \
                         .map(lambda line: str(line).rstrip('\n')) \
                         .filter_not(lambda line: str.strip(line) == "") \
@@ -28,6 +31,7 @@ class SearchForProductsFromList(luigi.Task):
         stacUrl = os.getenv("STAC_API_URL")
         bucketName = os.getenv("AWS_BUCKET_NAME")
 
+        log.info(f"Searching with STAC endpoint {stacUrl}")
         stacCatalog = Client.open(stacUrl)
         search = stacCatalog.search(ids=productList)
         results = list(search.items())
