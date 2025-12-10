@@ -30,12 +30,12 @@ class SearchForProducts(luigi.Task):
                                         var_type=str)
     relativeOrbitNumber = luigi.Parameter(default=None)
 
-    s2CloudCover = luigi.IntParameter(default=100)
+    s2CloudCover = luigi.Parameter(default=None)
 
     s1Polarisation = luigi.ChoiceParameter(default="", 
                                            choices=["", "VV", "VH"], 
                                            var_type=str)
-    s1InstrumentMode = luigi.ChoiceParameter(default="", 
+    s1InstrumentMode = luigi.ChoiceParameter(default="IW", 
                                         choices=["", "IW", "EW"],
                                         var_type=str)
 
@@ -78,12 +78,13 @@ class SearchForProducts(luigi.Task):
             query=query
             )
         results = list(search.items())
+        log.info(results)
         
         products = seq(results) \
                     .map(lambda r: {"productID": r.id,
-                                    "remotePath": r.assets["product_metadata"].href
+                                    "remotePath": r.assets["safe_manifest"].href
                                         .replace(f"s3://{bucketName}/", "")
-                                        .replace("/MTD_MSIL1C.xml", "")}) \
+                                        .replace("/manifest.safe", "")}) \
                     .to_list()
 
         with self.output().open("w") as outFile:

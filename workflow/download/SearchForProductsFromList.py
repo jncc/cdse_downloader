@@ -17,6 +17,17 @@ class SearchForProductsFromList(luigi.Task):
     productListFile = luigi.Parameter()
     envFilePath = luigi.Parameter(default=None)
 
+    def formatProductName(self, productName):
+        # S1 example: S1A_IW_GRDH_1SDV_20251210T063215_20251210T063240_062249_07CB28_A406_COG
+        # S2 example: S2A_MSIL1C_20250810T110701_N0511_R137_T30UXD_20250810T134221
+
+        formattedName = productName.rstrip("\n").rstrip(".SAFE")
+
+        if formattedName.startswith("S1") and not formattedName.endswith("_COG"):
+            formattedName += "_COG"
+
+        return formattedName
+
     def run(self):
         if self.envFilePath:
             load_dotenv(self.envFilePath)
@@ -24,7 +35,7 @@ class SearchForProductsFromList(luigi.Task):
             load_dotenv()
 
         productList = seq(open(self.productListFile)) \
-                        .map(lambda line: str(line).rstrip('\n')) \
+                        .map(lambda line: self.formatProductName(str(line))) \
                         .filter_not(lambda line: str.strip(line) == "") \
                         .set()
         
@@ -38,9 +49,9 @@ class SearchForProductsFromList(luigi.Task):
         
         products = seq(results) \
                     .map(lambda r: {"productID": r.id,
-                                    "remotePath": r.assets["product_metadata"].href
+                                    "remotePath": r.assets["safe_manifest"].href
                                         .replace(f"s3://{bucketName}/", "")
-                                        .replace("/MTD_MSIL1C.xml", "")}) \
+                                        .replace("/manifest.safe", "")}) \
                     .to_list()
         
         if len(productList) != len(products):
