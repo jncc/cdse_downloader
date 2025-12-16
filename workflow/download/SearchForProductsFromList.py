@@ -9,7 +9,6 @@ from pprint import pformat
 from luigi import LocalTarget
 from dotenv import load_dotenv
 
-
 log = logging.getLogger('luigi-interface')
 
 class SearchForProductsFromList(luigi.Task):

@@ -7,13 +7,9 @@ from pystac_client import Client
 from functional import seq
 from datetime import datetime
 from luigi import LocalTarget
-from luigi.util import requires
-
-log = logging.getLogger('luigi-interface')
-
 from dotenv import load_dotenv
 
-load_dotenv()
+log = logging.getLogger('luigi-interface')
 
 class SearchForProducts(luigi.Task):
     stateLocation = luigi.Parameter()
@@ -33,10 +29,10 @@ class SearchForProducts(luigi.Task):
     s2CloudCover = luigi.Parameter(default=None)
 
     s1Polarisation = luigi.ChoiceParameter(default="", 
-                                           choices=["", "VV", "VH"], 
+                                           choices=["", "VV", "VH", "HH", "HV"], 
                                            var_type=str)
     s1InstrumentMode = luigi.ChoiceParameter(default="IW", 
-                                        choices=["", "IW", "EW"],
+                                        choices=["", "IW", "EW", "SM"],
                                         var_type=str)
 
     def run(self):
