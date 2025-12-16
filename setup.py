@@ -2,15 +2,15 @@ import setuptools
  
 setuptools.setup(
     name="cdse_downloader",
-    version="0.0.1",
+    version="0.0.2",
     author="JNCC",
     author_email="developers@jncc.gov.uk",
-    description="A luigi workflow to get products from the Copernicus Data Space Ecosystem",
+    description="A luigi workflow to download products from the Copernicus Data Space Ecosystem",
     long_description="""
-        A Luigi workflow to get Sentnel 1 and 2 products from CDSE
-        
-        The workflow uses the Copernicus Data Space Ecosystem (CDSE) API to get a subset of the Sentinal 1 and 2 raw products.
-        
+        A Luigi workflow to download Sentinel 1 and 2 products from CDSE
+
+        The workflow uses the Copernicus Data Space Ecosystem (CDSE) STAC API to get a subset of the Sentinel 1 and 2 raw products.
+
         [The CDSE data portal](https://dataspace.copernicus.eu/)
 
         [Luigi workflow](https://luigi.readthedocs.io/en/stable/index.html)
@@ -23,7 +23,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        's3cmd',
+        'boto3',
         'luigi',
         'requests',
         'pyfunctional'
