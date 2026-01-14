@@ -31,7 +31,7 @@ class SearchForProducts(luigi.Task):
     s1Polarisation = luigi.ChoiceParameter(default="", 
                                            choices=["", "VV", "VH", "HH", "HV"], 
                                            var_type=str)
-    s1InstrumentMode = luigi.ChoiceParameter(default="IW", 
+    s1InstrumentMode = luigi.ChoiceParameter(default="", 
                                         choices=["", "IW", "EW", "SM"],
                                         var_type=str)
 
