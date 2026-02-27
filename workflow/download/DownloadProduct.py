@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 log = logging.getLogger('luigi-interface')
 
 class DownloadProduct(luigi.Task):
+    retry_count = 3 # luigi task retries
+
     remoteProductPath = luigi.Parameter()
     stateLocation = luigi.Parameter()
     downloadLocation = luigi.Parameter()
@@ -23,7 +25,7 @@ class DownloadProduct(luigi.Task):
 
         return os.path.join(self.downloadLocation, relativePath)
     
-    def download_with_retries(self, bucket, key, localPath, max_retries=3, wait=3):
+    def download_with_retries(self, bucket, key, localPath, max_retries=5, wait=5):
         attempt = 0
         while attempt < max_retries:
             try:
