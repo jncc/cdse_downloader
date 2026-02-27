@@ -23,7 +23,7 @@ class DownloadProduct(luigi.Task):
 
         return os.path.join(self.downloadLocation, relativePath)
     
-    def download_with_retries(self, bucket, key, localPath, max_retries=3, wait=1):
+    def download_with_retries(self, bucket, key, localPath, max_retries=3, wait=3):
         attempt = 0
         while attempt < max_retries:
             try:
