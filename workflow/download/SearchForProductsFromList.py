@@ -15,6 +15,7 @@ class SearchForProductsFromList(luigi.Task):
     stateLocation = luigi.Parameter()
     productListFile = luigi.Parameter()
     envFilePath = luigi.Parameter(default=None)
+    collections = luigi.Parameter(default="sentinel-1-grd,sentinel-1-slc,sentinel-2-l1c")
 
     def formatProductName(self, productName):
         # S1 example: S1A_IW_GRDH_1SDV_20251210T063215_20251210T063240_062249_07CB28_A406_COG
@@ -43,7 +44,7 @@ class SearchForProductsFromList(luigi.Task):
 
         log.info(f"Searching with STAC endpoint {stacUrl}")
         stacCatalog = Client.open(stacUrl)
-        search = stacCatalog.search(ids=productList)
+        search = stacCatalog.search(ids=productList, collections=self.collections.split(","))
         results = list(search.items())
         
         products = seq(results) \

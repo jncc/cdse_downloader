@@ -3,7 +3,9 @@ import json
 import os
 import logging
 import boto3
+import time
 
+from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
 log = logging.getLogger('luigi-interface')
@@ -20,7 +22,23 @@ class DownloadProduct(luigi.Task):
         relativePath = objectKey.replace(remoteDirectory, "").strip("/")
 
         return os.path.join(self.downloadLocation, relativePath)
-
+    
+    def download_with_retries(self, bucket, key, localPath, max_retries=3, wait=1):
+        attempt = 0
+        while attempt < max_retries:
+            try:
+                bucket.download_file(key, localPath)
+                return
+            except ClientError as e:
+                error_code = e.response.get("Error", {}).get("Code", "")
+                if error_code == "403":
+                    attempt += 1
+                    log.warning(f"403 Forbidden for {key}, retry {attempt}/{max_retries} after {wait}s")
+                    time.sleep(wait)
+                else:
+                    raise
+        raise Exception(f"Failed to download {key} after {max_retries} retries due to repeated 403 errors.")
+        
     def run(self):
         if self.envFilePath:
             load_dotenv(self.envFilePath)
@@ -40,10 +58,9 @@ class DownloadProduct(luigi.Task):
         if not self.dryRun:
             for file in files:
                 localPath = self.getLocalPath(file.key)
-                
                 os.makedirs(os.path.dirname(localPath), exist_ok=True)
                 if not os.path.isdir(file.key):
-                    bucket.download_file(file.key, localPath)
+                    self.download_with_retries(bucket, file.key, localPath)
         else:
             log.info("--dryRun mode enabled, skipping download")
 
