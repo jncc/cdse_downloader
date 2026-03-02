@@ -54,9 +54,14 @@ class SearchForProductsFromList(luigi.Task):
                                         .replace("/manifest.safe", "")}) \
                     .to_list()
         
-        if len(productList) != len(products):
+
+        # Guarantee uniqueness because CDSE can return random duplicates
+        unique_sets = set(frozenset(p.items()) for p in products)
+        unique_products = [dict(s) for s in unique_sets]
+
+        if len(productList) != len(unique_products):
             missingProducts = seq(productList) \
-                                .difference(seq(products)
+                                .difference(seq(unique_products)
                                             .map(lambda f: f['productID'])) \
                                 .to_list()
             
@@ -64,7 +69,7 @@ class SearchForProductsFromList(luigi.Task):
             raise Exception("The number of products returned does not match the number requested")
                     
         output = {
-            "productList": products
+            "productList": unique_products
         }
 
         with self.output().open("w") as outFile:
