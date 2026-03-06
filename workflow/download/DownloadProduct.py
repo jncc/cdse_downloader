@@ -29,6 +29,7 @@ class DownloadProduct(luigi.Task):
         attempt = 0
         while attempt < max_retries:
             try:
+                log.info(f"Downloading {key}")
                 bucket.download_file(key, localPath)
                 return
             except ClientError as e:
@@ -61,7 +62,7 @@ class DownloadProduct(luigi.Task):
             for file in files:
                 localPath = self.getLocalPath(file.key)
                 os.makedirs(os.path.dirname(localPath), exist_ok=True)
-                if not os.path.isdir(file.key):
+                if not os.path.isdir(file.key) and not file.key.endswith("/"):
                     self.download_with_retries(bucket, file.key, localPath)
         else:
             log.info("--dryRun mode enabled, skipping download")
