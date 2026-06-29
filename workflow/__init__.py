@@ -2,3 +2,4 @@ from workflow.download.SearchForProducts import SearchForProducts
 from workflow.download.SearchForProductsFromList import SearchForProductsFromList
 from workflow.download.DownloadProduct import DownloadProduct
 from workflow.download.DownloadProducts import DownloadProducts
+from workflow.download.GenerateProductList import GenerateProductList
