@@ -99,3 +99,11 @@ Specifiy the product list file on the command line using *productListFile*. This
 ```
 LUIGI_CONFIG_PATH=s2-list-luigi.cfg  PYTHONPATH='.' luigi --module workflow DownloadProductsFromList --productListFile=productlist.txt --local-scheduler
 ```
+
+## Get a list of products
+
+Takes the same parameters as `DownloadProductsByArea` except instead of a `downloadLocation`, it will instead save the product IDs to a file specified by `outputFile`.
+
+```
+LUIGI_CONFIG_PATH=s2-england-luigi.cfg PYTHONPATH='.' luigi --module workflow GenerateProductList --startDate=2019-07-06T0000 --endDate=2019-07-08T1200 --outputFile /path/to/my/output/file.txt --local-scheduler
+```
